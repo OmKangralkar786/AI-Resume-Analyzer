@@ -133,7 +133,25 @@ from rest_framework.response import Response
 @api_view(['GET'])
 def analytics(request):
 
+    total_resumes = Resume.objects.count()
+
+    average_ats = Resume.objects.aggregate(
+        Avg('ats_score')
+    )['ats_score__avg']
+
+    highest_ats = Resume.objects.aggregate(
+        Max('ats_score')
+    )['ats_score__max']
+
     return Response({
-        "status": "working",
-        "message": "Analytics API is running successfully"
+
+        'total_resumes': total_resumes,
+
+        'average_ats': round(
+            average_ats if average_ats else 0,
+            2
+        ),
+
+        'highest_ats':
+            highest_ats if highest_ats else 0
     })
